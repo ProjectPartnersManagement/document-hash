@@ -1,8 +1,8 @@
 import {config} from '../app/config';
 import {ApplicationRef, Injectable} from '@angular/core';
 
-// const contractAddress = location.href.includes("project-partners.de") ? "0x8efD8EAd0d02336D72E28B9b1e02D3ECF39C1D0b" : "0x7ce8d4eadd01c22f90c29c90df63c67317b25c4c";
-const contractAddress = '0x2333c497e50ed7e9aebc397c6ad8982de70a4ebd';
+// Live : Development
+const contractAddress = location.href.includes("project-partners.de") ? "0x8efD8EAd0d02336D72E28B9b1e02D3ECF39C1D0b" : "0x2333c497e50ed7e9aebc397c6ad8982de70a4ebd";
 
 declare var Web3: any;
 declare var web3: any;
