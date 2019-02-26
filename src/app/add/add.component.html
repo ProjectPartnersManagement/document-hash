@@ -4,7 +4,7 @@
 <div id="file-upload-container" *ngIf="!hash">
     <div class="floating-action-button" (click)="fileUpload.click()" matTooltip="Upload file">
         <mat-icon>file_upload</mat-icon>
-        <input type="file" ng2FileSelect [uploader]="uploader" #fileUpload accept="image/jpeg">
+        <input type="file" ng2FileSelect [uploader]="uploader" #fileUpload>
     </div>
     <div class="label">Add file</div>
 </div>
