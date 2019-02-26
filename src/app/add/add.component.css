@@ -1,0 +1,52 @@
+:host {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: center; }
+
+#file-upload-container {
+  display: flex;
+  align-items: center;
+  flex-direction: row; }
+
+.floating-action-button {
+  position: initial;
+  width: 40px; }
+  .floating-action-button > input {
+    display: none; }
+
+.label {
+  flex: 1;
+  color: #bdbd00;
+  font-size: 1.2em;
+  padding-left: 10px; }
+
+#hash-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; }
+
+.filename {
+  font-weight: bold; }
+
+.hash {
+  word-break: break-all;
+  padding: 0 10px;
+  text-align: center; }
+
+mat-icon#file-to-hash {
+  transform: rotate(90deg);
+  margin: 10px; }
+
+#remove-file-container {
+  position: absolute;
+  top: 10px;
+  left: 10px; }
+
+mat-icon#remove-file {
+  opacity: 0.5;
+  cursor: pointer; }
+  mat-icon#remove-file:hover {
+    opacity: 1; }
+
+/*# sourceMappingURL=add.component.css.map */

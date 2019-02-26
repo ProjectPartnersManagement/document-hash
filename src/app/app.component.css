@@ -1,0 +1,45 @@
+#metamask-missing-error {
+  background: #da0000;
+  color: #fff;
+  padding: 30px;
+  text-align: center;
+  font-size: 1.2em;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.5); }
+  #metamask-missing-error a {
+    color: #fff; }
+
+#logo {
+  background-image: url("/assets/pp-logo.png");
+  height: 60px;
+  width: 200px;
+  background-size: contain;
+  position: fixed;
+  top: 10px;
+  left: 10px; }
+
+#card {
+  min-height: 200px;
+  width: 420px;
+  position: absolute;
+  top: calc(50% - 100px);
+  left: calc(50% - 210px);
+  display: flex; }
+
+router-outlet {
+  position: relative; }
+
+#footer {
+  color: #ffffff;
+  position: absolute;
+  bottom: 10px;
+  text-align: center;
+  width: 100%; }
+  #footer .entry {
+    color: #ffffff;
+    text-decoration: none; }
+    #footer .entry:hover {
+      text-decoration: underline; }
+  #footer .divider {
+    margin: 0 10px; }
+
+/*# sourceMappingURL=app.component.css.map */

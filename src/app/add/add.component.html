@@ -1,0 +1,48 @@
+<!--***********************************************
+** File Upload
+************************************************-->
+<div id="file-upload-container" *ngIf="!hash">
+    <div class="floating-action-button" (click)="fileUpload.click()" matTooltip="Upload file">
+        <mat-icon>file_upload</mat-icon>
+        <input type="file" ng2FileSelect [uploader]="uploader" #fileUpload accept="image/jpeg">
+    </div>
+    <div class="label">Add file</div>
+</div>
+<!--***********************************************
+** END File Upload
+************************************************-->
+
+<!--***********************************************
+** Show Generated Hash
+************************************************-->
+<div id="hash-container" *ngIf="hash">
+    <span class="filename">{{filename}}</span>
+    <div class="separator">
+        <mat-icon id="file-to-hash">arrow_forward_ios</mat-icon>
+    </div>
+    <span class="hash">{{hash}}</span>
+
+    <div id="remove-file-container" matTooltip="Go back to file upload">
+        <mat-icon id="remove-file" (click)="removeUploadedFile()">arrow_back</mat-icon>
+    </div>
+
+    <div class="button" *ngIf="!documentHashContract.pendingTransactionHash" (click)="writeHashToBlockchain()">Verewigen</div>
+    <div id="transaction-pending-container" *ngIf="documentHashContract.pendingTransactionHash">
+        <div id="transaction-pending-icon">
+            <svg width='24px' height='24px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-ring-alt" title="Warte auf Verarbeitung in Block">
+                <rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect>
+                <circle cx="50" cy="50" r="40" stroke="" fill="none" stroke-width="10" stroke-linecap="round"></circle>
+                <circle cx="50" cy="50" r="40" stroke="#99BF0E" fill="none" stroke-width="6" stroke-linecap="round">
+                    <animate attributeName="stroke-dashoffset" dur="2s" repeatCount="indefinite" from="0" to="502"></animate>
+                    <animate attributeName="stroke-dasharray" dur="2s" repeatCount="indefinite" values="150.6 100.4;1 250;150.6 100.4"></animate>
+                </circle>
+            </svg>
+        </div>
+        <div id="transaction-pending-label">
+            Warte auf die Verarbeitung der Transaktion {{pendingTransactionHash}}[...] in einem Block...
+        </div>
+    </div>
+</div>
+<!--***********************************************
+** END Show Generated Hash
+************************************************-->

@@ -1,0 +1,200 @@
+@import "../node_modules/@angular/material/theming";
+@import 'responsive-breakpoints';
+
+// Include non-theme styles for core
+@include mat-core();
+
+// Define a theme.
+$primary: mat-palette($mat-blue);
+$accent: mat-palette($mat-blue, A200, A100, A400);
+
+$theme: mat-light-theme($primary, $accent);
+
+// Include all theme styles for the components.
+@include angular-material-theme($theme);
+
+//*****************************************************************************
+//  aX Material Overwrites
+//****************************************************************************/
+
+/**
+* This file only contains rules that overwrite the default material defaults. Screen-specific styles
+* must either go into the component's scss or the styles.scss if styling in the component is not possible.
+ */
+
+//*****************************************************************************
+//  Form Field
+//****************************************************************************/
+mat-form-field {
+    // Overwrite Material Design's standard setting to Roboto and Helvetica Neue.
+    font-family: inherit !important;
+}
+
+// This higher level of precision is required to overwrite the theme rules.
+.mat-form-field-appearance-legacy {
+    .mat-form-field-underline,
+    .mat-select-underline {
+        background-color: rgba(0, 0, 0, 0.12);
+    }
+}
+
+.mat-form-field-infix {
+    width: auto !important;
+}
+
+.mat-input-suffix {
+    [matSuffix] {
+        margin-left: 5px;
+    }
+}
+
+[matSuffix] {
+    margin-left: 4px;
+}
+
+.mat-input-element:disabled {
+    color: inherit;
+}
+
+/////////////////////////////////////////////////////////////////////////////*/
+//  END Form Field
+/////////////////////////////////////////////////////////////////////////////*/
+
+//*****************************************************************************
+//  mat-select
+//****************************************************************************/
+mat-select {
+    font-family: inherit !important;
+}
+
+// Overwrite the stupid styling from the material team that determines the minimum width of a select field to be 112px.
+div.mat-select-trigger {
+    min-width: unset;
+}
+
+.mat-select-value {
+    font-family: "Source Sans Pro", sans-serif;
+    color: #5c5c5c !important;
+}
+
+/////////////////////////////////////////////////////////////////////////////*/
+//  END mat-select
+/////////////////////////////////////////////////////////////////////////////*/
+
+//*****************************************************************************
+//  mat-menu
+//****************************************************************************/
+a[mat-menu-item] {
+    font-size: 10.5pt;
+}
+
+div.mat-menu-panel {
+    max-width: 400px;
+}
+
+/////////////////////////////////////////////////////////////////////////////*/
+//  END mat-menu
+/////////////////////////////////////////////////////////////////////////////*/
+
+//*****************************************************************************
+//  mat-autocomplete
+//****************************************************************************/
+.mat-autocomplete-panel {
+    &.min-width-autocomplete {
+        min-width: 220px;
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////*/
+//  END mat-autocomplete
+/////////////////////////////////////////////////////////////////////////////*/
+
+//*****************************************************************************
+//  mat-option
+//****************************************************************************/
+.mat-option {
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.mat-option-text {
+    max-width: 100%
+}
+
+/////////////////////////////////////////////////////////////////////////////*/
+//  END mat-option
+/////////////////////////////////////////////////////////////////////////////*/
+
+//*****************************************************************************
+//  mat-checkbox
+//****************************************************************************/
+.mat-checkbox-disabled {
+    .mat-checkbox-label {
+        color: inherit;
+    }
+
+    &.mat-checkbox-checked:not(.mat-checkbox-indeterminate) {
+        .mat-checkbox-frame {
+            border-color: #448aff;
+        }
+
+        .mat-checkbox-background {
+            background: transparent;
+
+            .mat-checkbox-checkmark {
+                .mat-checkbox-checkmark-path {
+                    stroke: #448aff !important; // Material Theming uses !important, so this is necessary to overwrite.
+                }
+            }
+        }
+    }
+}
+
+.mat-checkbox-label {
+    white-space: normal;
+    font-family: 'Source Sans Pro', Roboto, sans-serif;
+    @media(min-width: $xl) {
+        white-space: nowrap;
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////*/
+//  END mat-checkbox
+/////////////////////////////////////////////////////////////////////////////*/
+
+//*****************************************************************************
+//  Tooltip
+//****************************************************************************/
+.mat-tooltip {
+    font-size: .9rem !important;
+    font-family: "Source Sans Pro", sans-serif;
+    overflow-wrap: break-word;
+}
+
+/////////////////////////////////////////////////////////////////////////////*/
+//  END Tooltip
+/////////////////////////////////////////////////////////////////////////////*/
+
+//*****************************************************************************
+//  Datepicker
+//****************************************************************************/
+.mat-form-field-appearance-legacy .mat-form-field-suffix .mat-icon-button .mat-icon.datepicker-toggle-icon {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    color: #a1a1a1;
+    opacity: .4;
+    transition: color .2s ease, opacity .2s ease;
+
+    &:hover {
+        color: #15a9e8;
+        opacity: 1;
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////*/
+//  END Datepicker
+/////////////////////////////////////////////////////////////////////////////*/
+/////////////////////////////////////////////////////////////////////////////*/
+//  END aX Material Overwrites
+/////////////////////////////////////////////////////////////////////////////*/
