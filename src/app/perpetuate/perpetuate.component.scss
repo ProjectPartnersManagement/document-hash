@@ -1,0 +1,42 @@
+:host {
+    width: 100%;
+    padding-top: 13px;
+}
+
+#hash-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 35px;
+}
+
+.filename {
+    font-weight: bold;
+    text-align: center;
+}
+
+.hash {
+    word-break: break-all;
+    padding: 0 10px;
+    text-align: center;
+}
+
+mat-icon#file-to-hash {
+    transform: rotate(90deg);
+    margin: 10px;
+}
+
+#remove-file-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+mat-icon#remove-file {
+    opacity: 0.5;
+    cursor: pointer;
+
+    &:hover {
+        opacity: 1;
+    }
+}

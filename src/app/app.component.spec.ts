@@ -23,13 +23,13 @@ describe('AppComponent', () => {
   it(`should have as title 'document-hash'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('document-hash');
+    expect(app.title).toEqual('document-fileHash');
   });
 
   it('should render title in a h1 tag', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to document-hash!');
+    expect(compiled.querySelector('h1').textContent).toContain('Welcome to document-fileHash!');
   });
 });

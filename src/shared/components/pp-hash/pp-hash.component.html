@@ -1,0 +1,8 @@
+<div id="hash-clipboard-container">
+    <div id="abbreviated-hash" [matTooltip]="hash">
+        <span *ngIf="!etherscanLinkType">{{getAbbreviatedHash()}}</span>
+        <a [href]="'https://etherscan.io/' + etherscanLinkType + '/' + hash" target="_blank" *ngIf="etherscanLinkType">{{getAbbreviatedHash()}}</a>
+    </div>
+    <mat-icon ngxClipboard [cbContent]="hash" (cbOnSuccess)="showClipboardConfirmation()" *ngIf="hash && !hashCopiedToClipboardConfirmation" matTooltip="Copy to clipboard">assignment</mat-icon>
+    <mat-icon *ngIf="hashCopiedToClipboardConfirmation">check</mat-icon>
+</div>

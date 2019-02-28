@@ -9,6 +9,22 @@
   align-items: center;
   flex-direction: row; }
 
+#drop-overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: rgba(189, 189, 0, 0.05);
+  border: 3px solid #bdbd00;
+  animation: border-pulse-blue 0.8s infinite alternate; }
+
+@keyframes border-pulse-blue {
+  0% {
+    border-color: #bdbd00; }
+  100% {
+    border-color: rgba(21, 169, 232, 0.1); } }
 .floating-action-button {
   position: initial;
   width: 40px; }
@@ -20,33 +36,5 @@
   color: #bdbd00;
   font-size: 1.2em;
   padding-left: 10px; }
-
-#hash-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center; }
-
-.filename {
-  font-weight: bold; }
-
-.hash {
-  word-break: break-all;
-  padding: 0 10px;
-  text-align: center; }
-
-mat-icon#file-to-hash {
-  transform: rotate(90deg);
-  margin: 10px; }
-
-#remove-file-container {
-  position: absolute;
-  top: 10px;
-  left: 10px; }
-
-mat-icon#remove-file {
-  opacity: 0.5;
-  cursor: pointer; }
-  mat-icon#remove-file:hover {
-    opacity: 1; }
 
 /*# sourceMappingURL=add.component.css.map */

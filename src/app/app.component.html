@@ -1,7 +1,7 @@
 <div id="metamask-missing-error" *ngIf="metamaskMissing">
     Metamask could not be detected. Please install or activate the <a href="https://www.google.com/search?q=install+metamask" target="_blank">Browser Plugin Metamask</a>.
 </div>
-<div id="logo"></div>
+<div id="logo" (click)="navigateToStartPage()"></div>
 <div class="card" id="card">
     <router-outlet></router-outlet>
 </div>

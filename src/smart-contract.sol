@@ -1,16 +1,16 @@
 pragma solidity ^0.5.0;
 
 contract DocumentHash {
-    mapping(string => uint) hashToTimestamp;
+    mapping(string => uint) hashToBlockNumber;
 
     function write(string memory hash) public {
         // Require the hash to be not set.
-        require(hashToTimestamp[hash] == 0);
+        require(hashToBlockNumber[hash] == 0);
 
-        hashToTimestamp[hash] = now;
+        hashToBlockNumber[hash] = block.number;
     }
 
-    function getTimestamp(string memory hash) public view returns(uint) {
-        return hashToTimestamp[hash];
+    function getBlockNumber(string memory hash) public view returns(uint) {
+        return hashToBlockNumber[hash];
     }
 }

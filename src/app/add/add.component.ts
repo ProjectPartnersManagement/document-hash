@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, HostListener} from '@angular/core';
 import {FileUploader, FileItem} from 'ng2-file-upload';
 import {Router} from '@angular/router';
 import {config} from '../config';
@@ -12,12 +12,18 @@ import {DocumentHashSmartContractService} from '../../lib/document-hash-smart-co
 export class AddComponent {
     // Uploader instance for uploading photos to the server
     uploader: FileUploader;
+    // Sometimes, the detection of the onDragEnd event does not work correctly. Thus, we should remove the upload after a second
+    // of no other onDragOver event on the body
+    fileOverBodyTimeoutCache;
+    // Becomes true when the user drags files over the drop zone
+    fileIsOverDropZone: boolean = false;
+    // Becomes true when the user drags files over the window. The drop zone can then be shown.
+    fileIsOverBody: boolean     = false;
+
     hash: string;
-    hashAbbreviated: string;
     filename: string;
 
-    constructor(private router: Router,
-                private documentHashContract: DocumentHashSmartContractService) {
+    constructor(private router: Router) {
     }
 
     ngOnInit() {
@@ -49,25 +55,44 @@ export class AddComponent {
 
         // After selecting files
         this.uploader.onAfterAddingFile = async (item: FileItem) => {
-            this.filename        = item._file.name;
-            this.hash            = '0x' + this.bufferToHex(await window.crypto.subtle.digest('SHA-256', await this.blobToArrayBuffer(item._file)));
-            this.hashAbbreviated = this.hash.substr(0, 15) + '...' + this.hash.substr(-15);
+            this.filename = item._file.name;
+            this.hash     = '0x' + this.bufferToHex(await window.crypto.subtle.digest('SHA-256', await this.blobToArrayBuffer(item._file)));
+
+            this.router.navigate(['perpetuate', this.hash], {
+                queryParams : {filename : this.filename}
+            });
         };
     }
 
-    removeUploadedFile(): void {
-        this.filename        = null;
-        this.hash            = null;
-        this.hashAbbreviated = null;
+    //*****************************************************************************
+    //  Drag'n'Drop File Upload
+    //****************************************************************************/
+    // Event handler which listens to the mousein and mouseout event if the user drags a file
+    public onFileOverDropZone(fileOver: boolean): void {
+        if (fileOver === true) {
+            this.fileIsOverDropZone = true;
+        } else {
+            this.fileIsOverDropZone = false;
+            this.fileIsOverBody     = false;
+        }
     }
 
-    async writeHashToBlockchain() {
-        await this.documentHashContract.writeHash(this.hash);
-
-        this.router.navigate(['hashes', this.hash]);
+    public onFileDrop(files: File[]): void {
+        // Disable the drop zone as soon as content is dropped
+        this.fileIsOverBody = false;
     }
 
-/////////////////////////////////////////////////////////////////////////////*/
-//  END Smart Contract Integration
-/////////////////////////////////////////////////////////////////////////////*/
+    /**
+     * Show drop zone
+     */
+    @HostListener('body:dragover', ['$event'])
+    onFileOverBody() {
+        clearTimeout(this.fileOverBodyTimeoutCache);
+
+        this.fileIsOverBody = true;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////*/
+    //  END Drag'n'Drop File Upload
+    /////////////////////////////////////////////////////////////////////////////*/
 }

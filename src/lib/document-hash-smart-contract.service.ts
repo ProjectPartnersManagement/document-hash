@@ -1,8 +1,10 @@
 import {config} from '../app/config';
 import {ApplicationRef, Injectable} from '@angular/core';
+import {AbiDecoder} from './pp-abi-decoder';
+import {Block, Transaction} from '../types/block';
 
 // Live : Development
-const contractAddress = location.href.includes("project-partners.de") ? "0x5336aC4ab4fEAd6675365FD6d9A96b9534105fba" : "0x2333c497e50ed7e9aebc397c6ad8982de70a4ebd";
+const contractAddress: string = location.href.includes('project-partners.de') ? '0x5336aC4ab4fEAd6675365FD6d9A96b9534105fba' : '0xde05cf220dab7d2b5437394ae3dbd3d16d119d4c';
 
 declare var Web3: any;
 declare var web3: any;
@@ -29,35 +31,67 @@ export class DocumentHashSmartContractService {
             console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
         }
         this.documentHashContract = new web3.eth.Contract(documentHashContractABI, contractAddress.toLowerCase());
-    }
 
-    async requestMetamaskAccess() {
-        try {
-            // Request account access if needed
-            await ethereum.enable();
-            // Acccounts now exposed
-        } catch (error) {
-            // User denied account access...
-        }
+        (window as any).AbiDecoder = AbiDecoder;
     }
 
     /**
      * Return the current status as a string, e. g. "bare" or "paid"
      */
-    async getTimestamp(hash) {
-        this.requestMetamaskAccess();
+    private async getBlock(fileHash): Promise<Block> {
+        let blockNumber;
 
         try {
-            const response = await this.documentHashContract.methods.getTimestamp(hash).call();
-
-            return response.status;
-        } catch (error) {
-            console.error('Error getting status', error);
-            if (error.message === 'Couldn\'t decode address from ABI: 0x')
-                throw new Error('PACKAGE_TRANSACTION_NOT_FOUND');
-            else
-                throw new Error('GENERAL_ERROR');
+            blockNumber = await this.documentHashContract.methods.getBlockNumber(fileHash).call();
         }
+        catch (error) {
+            console.error('Error getting block number by file hash.', error);
+            if (error.message === 'Couldn\'t decode address from ABI: 0x')
+                throw new Error('HASH_NOT_FOUND');
+            else
+                throw new Error('GETTING_BLOCK_NUMBER_BY_FILE_HASH_FAILED');
+        }
+
+        try {
+            return web3.eth.getBlock(blockNumber);
+        }
+        catch (error) {
+            console.error('Error getting block by number.', error);
+            throw new Error('GETTING_BLOCK_FAILED');
+        }
+    }
+
+    async getHashMetadata(fileHash): Promise<HashMetadata> {
+        const block = await this.getBlock(fileHash);
+
+        AbiDecoder.addABI(documentHashContractABI);
+
+        for (const transactionHash of block.transactions) {
+            const transaction: Transaction = await web3.eth.getTransaction(transactionHash, block.number);
+
+            // Only inspect transactions targeting this smart contract
+            if (transaction.to.toLowerCase() !== contractAddress.toLowerCase()) {
+                console.log(`Skip searching through transaction "${transaction.hash}" because it does not concern the document hash smart contract.`);
+                continue;
+            }
+
+            // Decode transaction data
+            const transactionData             = AbiDecoder.decodeMethod(transaction.input);
+            const fileHashFromTransactionData = transactionData.params.find(param => param.name === 'hash').value;
+            console.log('Decoded fileHash from transaction data', fileHashFromTransactionData);
+
+            if (fileHashFromTransactionData === fileHash) {
+                return {
+                    fileHash        : fileHash,
+                    perpetuatedBy   : transaction.from,
+                    // Javascript uses milliseconds for the timestamp, not seconds as in the Unix timestamp.
+                    timestamp       : new Date(block.timestamp * 1000),
+                    transactionHash : transaction.hash,
+                };
+            }
+        }
+
+        throw new Error('METADATA_FOR_GIVEN_HASH_NOT_FOUND');
     }
 
     /**
@@ -67,7 +101,6 @@ export class DocumentHashSmartContractService {
         if (!hash) {
             throw new Error('MISSING_HASH');
         }
-        this.requestMetamaskAccess();
 
         const encodedABI = this.documentHashContract.methods.write(hash).encodeABI();
 
@@ -115,15 +148,18 @@ export class DocumentHashSmartContractService {
 
                     resolve({
                         confirmationNumber,
-                        receipt
+                        receipt,
+                        transactionEventEmitter
                     });
                 })
                 .on('error', (error, receipt) => {
-                    if (error.message.includes('User denied transaction signature.')) {
-                        reject(new Error('METAMASK_USER_DENIED_TRANSACTION'));
-                    }
                     console.log('The transaction failed.', error);
-                    alert('The blockchain transaction failed.');
+                    if (error.message.includes('User denied transaction signature.')) {
+                        return reject(new Error('METAMASK_USER_DENIED_TRANSACTION'));
+                    }
+                    else {
+                        alert('The blockchain transaction failed.');
+                    }
 
                     this.pendingTransactionHash = null;
                     this.applicationRef.tick();
@@ -156,7 +192,7 @@ export const documentHashContractABI = JSON.parse(`[
 				"type": "string"
 			}
 		],
-		"name": "getTimestamp",
+		"name": "getBlockNumber",
 		"outputs": [
 			{
 				"name": "",
@@ -168,3 +204,10 @@ export const documentHashContractABI = JSON.parse(`[
 		"type": "function"
 	}
 ]`);
+
+export interface HashMetadata {
+    fileHash: string;
+    perpetuatedBy: string;
+    timestamp: Date;
+    transactionHash: string;
+}
