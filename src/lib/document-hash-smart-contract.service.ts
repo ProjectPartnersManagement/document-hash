@@ -18,6 +18,8 @@ export class DocumentHashSmartContractService {
     numberOfConfirmations: number          = null;
     TARGET_NUMBER_OF_CONFIRMATIONS: number = 10;
 
+    transactionEventEmitter: any;
+
     //*****************************************************************************
     //  Smart Contract Integration
     //****************************************************************************/
@@ -121,22 +123,20 @@ export class DocumentHashSmartContractService {
             data     : encodedABI
         };
 
-        const transactionEventEmitter = web3.eth.sendTransaction(transaction);
+        this.transactionEventEmitter = web3.eth.sendTransaction(transaction);
 
-        return this.attachTransactionEventHandlers(transactionEventEmitter);
+        return this.attachTransactionEventHandlers();
     }
 
-    attachTransactionEventHandlers(transactionEventEmitter): Promise<{ transactionEventEmitter: any }> {
+    private attachTransactionEventHandlers(): Promise<void> {
         return new Promise((resolve, reject) => {
-            transactionEventEmitter
+            this.transactionEventEmitter
                 .on('transactionHash', (transactionHash) => {
                     console.log('Transaction hash received.', transactionHash);
 
                     this.pendingTransactionHash = transactionHash;
 
-                    resolve({
-                        transactionEventEmitter
-                    });
+                    resolve();
                 })
                 .on('receipt', (receipt) => {
                     console.log('Receipt received.', receipt);
@@ -147,11 +147,8 @@ export class DocumentHashSmartContractService {
                     this.numberOfConfirmations = confirmationNumber;
 
                     if (this.isTransactionFullyConfirmed()) {
-                        transactionEventEmitter.emit('completeConfirmation', this.numberOfConfirmations);
-                        // The transaction was mined successfully.
-                        this.pendingTransactionHash = null;
-                        this.numberOfConfirmations  = null;
-                        transactionEventEmitter.removeAllListeners();
+                        this.transactionEventEmitter.emit('completeConfirmation', this.numberOfConfirmations);
+                        this.stopWaitingForConfirmations();
                     }
                 })
                 .on('error', (error, receipt) => {
@@ -169,17 +166,18 @@ export class DocumentHashSmartContractService {
         });
     }
 
-    getAbbreviatedPendingTransactionHash(): string {
-        if (!this.pendingTransactionHash) return '';
-
-        return this.pendingTransactionHash.substr(0, 15) + '...' + this.pendingTransactionHash.substr(-15);
+    stopWaitingForConfirmations(): void {
+        // The transaction was mined successfully.
+        this.pendingTransactionHash = null;
+        this.numberOfConfirmations  = null;
+        this.transactionEventEmitter.removeAllListeners();
     }
 
-    public isTransactionPending(): boolean {
+    isTransactionPending(): boolean {
         return !!this.pendingTransactionHash;
     }
 
-    public isTransactionFullyConfirmed(): boolean {
+    isTransactionFullyConfirmed(): boolean {
         return this.numberOfConfirmations >= this.TARGET_NUMBER_OF_CONFIRMATIONS;
     }
 }

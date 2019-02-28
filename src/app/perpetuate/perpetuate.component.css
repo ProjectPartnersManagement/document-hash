@@ -36,9 +36,16 @@ mat-icon#remove-file {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 10px; }
+  justify-content: center;
+  margin-top: 10px;
+  height: 100%; }
   #transaction-pending-container #transaction-pending-label {
     padding-bottom: 10px;
     text-align: center; }
+  #transaction-pending-container #skip-waiting-for-confirmations {
+    cursor: pointer;
+    color: #bdbd00; }
+    #transaction-pending-container #skip-waiting-for-confirmations:hover {
+      text-decoration: underline; }
 
 /*# sourceMappingURL=perpetuate.component.css.map */

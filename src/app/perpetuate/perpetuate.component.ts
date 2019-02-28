@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, NgZone} from '@angular/core';
+import {ChangeDetectorRef, Component, NgZone, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DocumentHashSmartContractService} from '../../lib/document-hash-smart-contract.service';
 
@@ -7,7 +7,7 @@ import {DocumentHashSmartContractService} from '../../lib/document-hash-smart-co
     templateUrl : 'perpetuate.component.html',
     styleUrls   : ['perpetuate.component.css'],
 })
-export class PerpetuateComponent {
+export class PerpetuateComponent implements OnInit {
     constructor(private router: Router,
                 private route: ActivatedRoute,
                 private changeDetectorRef: ChangeDetectorRef,
@@ -24,19 +24,21 @@ export class PerpetuateComponent {
     }
 
     async writeHashToBlockchain() {
-        const result = await this.documentHashContract.writeHash(this.hash);
+        await this.documentHashContract.writeHash(this.hash);
 
         // Change detection needs to be triggered manually, since Angular does not patch the web3 event emitters.
         if (!this.changeDetectorRef['destroyed']) {
             this.changeDetectorRef.detectChanges();
         }
 
-        result.transactionEventEmitter
+        this.documentHashContract.transactionEventEmitter
             .on('confirmation', (confirmationNumber) => {
-                // Change detection needs to be triggered manually, since Angular does not patch the web3 event emitters.
-                if (!this.changeDetectorRef['destroyed']) {
-                    this.changeDetectorRef.detectChanges();
-                }
+                this.ngZone.run(() => {
+                    // Change detection needs to be triggered manually, since Angular does not patch the web3 event emitters.
+                    if (!this.changeDetectorRef['destroyed']) {
+                        this.changeDetectorRef.detectChanges();
+                    }
+                });
             })
             .once('completeConfirmation', () => {
                 this.ngZone.run(() => this.router.navigate(['hashes', this.hash]));
@@ -44,12 +46,12 @@ export class PerpetuateComponent {
     }
 
     skipWaitingForConfirmations(): void {
-        this.ngZone.run(() => {
-            this.router.navigate(['hashes', this.hash]);
-        });
+        this.documentHashContract.stopWaitingForConfirmations();
+        this.router.navigate(['hashes', this.hash]);
     }
 
     removeUploadedFile(): void {
+        this.documentHashContract.stopWaitingForConfirmations();
         this.router.navigate(['/']);
     }
 }

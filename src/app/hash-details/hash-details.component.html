@@ -20,7 +20,7 @@
     </div>
 </div>
 
-<div id="results-container">
+<div id="results-container" *ngIf="!requestPending">
     <table *ngIf="!fileHashNotFound">
         <tr>
             <td class="label">File Hash</td>

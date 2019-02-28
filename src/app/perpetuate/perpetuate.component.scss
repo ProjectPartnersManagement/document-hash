@@ -45,10 +45,21 @@ mat-icon#remove-file {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     margin-top: 10px;
+    height: 100%;
 
     #transaction-pending-label {
         padding-bottom: 10px;
         text-align: center;
+    }
+
+    #skip-waiting-for-confirmations {
+        cursor: pointer;
+        color: #bdbd00;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
 }
