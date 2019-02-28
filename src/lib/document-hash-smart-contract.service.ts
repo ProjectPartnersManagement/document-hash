@@ -66,9 +66,9 @@ export class DocumentHashSmartContractService {
 
         AbiDecoder.addABI(documentHashContractABI);
 
-        for (const transactionHash of block.transactions) {
-            const transaction: Transaction = await web3.eth.getTransaction(transactionHash, block.number);
+        const transactions: Transaction[] = await Promise.all(block.transactions.map(transactionHash => web3.eth.getTransaction(transactionHash, block.number)));
 
+        for (const transaction of transactions) {
             // Only inspect transactions targeting this smart contract
             if (transaction.to.toLowerCase() !== contractAddress.toLowerCase()) {
                 console.log(`Skip searching through transaction "${transaction.hash}" because it does not concern the document hash smart contract.`);
