@@ -4,7 +4,7 @@ import {AbiDecoder} from './pp-abi-decoder';
 import {Block, Transaction} from '../types/block';
 
 // Live : Development
-const contractAddress: string = location.href.includes('project-partners.de') ? '0x5336aC4ab4fEAd6675365FD6d9A96b9534105fba' : '0xde05cf220dab7d2b5437394ae3dbd3d16d119d4c';
+const contractAddress: string = location.href.includes('project-partners.de') ? '0x42ba3977dEDb68d1aA284847B710B870cf8217B5' : '0xde05cf220dab7d2b5437394ae3dbd3d16d119d4c';
 
 declare var Web3: any;
 declare var web3: any;
