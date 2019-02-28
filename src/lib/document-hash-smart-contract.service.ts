@@ -3,15 +3,15 @@ import {Injectable} from '@angular/core';
 import {AbiDecoder} from './pp-abi-decoder';
 import {Block, Transaction} from '../types/block';
 
-// Live : Development
-const contractAddress: string = location.href.includes('project-partners.de') ? '0x42ba3977dEDb68d1aA284847B710B870cf8217B5' : '0xde05cf220dab7d2b5437394ae3dbd3d16d119d4c';
-
 declare var Web3: any;
 declare var web3: any;
 declare var ethereum: any;
 
 @Injectable()
 export class DocumentHashSmartContractService {
+    // Live : Development
+    SMART_CONTRACT_ADDRESS: string = location.href.includes('project-partners.de') ? '0x42ba3977dEDb68d1aA284847B710B870cf8217B5' : '0xde05cf220dab7d2b5437394ae3dbd3d16d119d4c';
+
     smartContract;
     pendingTransactionHash: string;
 
@@ -35,7 +35,7 @@ export class DocumentHashSmartContractService {
         else {
             console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
         }
-        this.smartContract = new web3.eth.Contract(documentHashContractABI, contractAddress.toLowerCase());
+        this.smartContract = new web3.eth.Contract(documentHashContractABI, this.SMART_CONTRACT_ADDRESS.toLowerCase());
 
         (window as any).AbiDecoder = AbiDecoder;
     }
@@ -76,7 +76,7 @@ export class DocumentHashSmartContractService {
 
         for (const transaction of transactions) {
             // Only inspect transactions targeting this smart contract
-            if (transaction.to.toLowerCase() !== contractAddress.toLowerCase()) {
+            if (transaction.to.toLowerCase() !== this.SMART_CONTRACT_ADDRESS.toLowerCase()) {
                 console.log(`Skip searching through transaction "${transaction.hash}" because it does not concern the document hash smart contract.`);
                 continue;
             }
@@ -116,7 +116,7 @@ export class DocumentHashSmartContractService {
             // Use the chain ID we defined in the genesis-block.json when creating
             chainId  : config.ethereum.chainId,
             from     : currentAccountAddress,
-            to       : contractAddress,
+            to       : this.SMART_CONTRACT_ADDRESS,
             // Will be set by Metamask
             // gas      : 3000000,
             gasPrice : await web3.eth.getGasPrice() || '100000000',
