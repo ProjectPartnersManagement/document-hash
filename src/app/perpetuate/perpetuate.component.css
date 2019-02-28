@@ -32,4 +32,13 @@ mat-icon#remove-file {
   mat-icon#remove-file:hover {
     opacity: 1; }
 
+#transaction-pending-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px; }
+  #transaction-pending-container #transaction-pending-label {
+    padding-bottom: 10px;
+    text-align: center; }
+
 /*# sourceMappingURL=perpetuate.component.css.map */

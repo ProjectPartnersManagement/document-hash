@@ -40,3 +40,15 @@ mat-icon#remove-file {
         opacity: 1;
     }
 }
+
+#transaction-pending-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+
+    #transaction-pending-label {
+        padding-bottom: 10px;
+        text-align: center;
+    }
+}

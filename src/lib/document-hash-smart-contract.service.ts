@@ -1,5 +1,5 @@
 import {config} from '../app/config';
-import {ApplicationRef, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {AbiDecoder} from './pp-abi-decoder';
 import {Block, Transaction} from '../types/block';
 
@@ -12,13 +12,16 @@ declare var ethereum: any;
 
 @Injectable()
 export class DocumentHashSmartContractService {
-    documentHashContract;
+    smartContract;
     pendingTransactionHash: string;
+
+    numberOfConfirmations: number          = null;
+    TARGET_NUMBER_OF_CONFIRMATIONS: number = 10;
 
     //*****************************************************************************
     //  Smart Contract Integration
     //****************************************************************************/
-    constructor(private applicationRef: ApplicationRef) {
+    constructor() {
         if ((window as any).ethereum) {
             (window as any).web3 = new Web3(ethereum);
         }
@@ -30,7 +33,7 @@ export class DocumentHashSmartContractService {
         else {
             console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
         }
-        this.documentHashContract = new web3.eth.Contract(documentHashContractABI, contractAddress.toLowerCase());
+        this.smartContract = new web3.eth.Contract(documentHashContractABI, contractAddress.toLowerCase());
 
         (window as any).AbiDecoder = AbiDecoder;
     }
@@ -42,7 +45,7 @@ export class DocumentHashSmartContractService {
         let blockNumber;
 
         try {
-            blockNumber = await this.documentHashContract.methods.getBlockNumber(fileHash).call();
+            blockNumber = await this.smartContract.methods.getBlockNumber(fileHash).call();
         }
         catch (error) {
             console.error('Error getting block number by file hash.', error);
@@ -66,6 +69,7 @@ export class DocumentHashSmartContractService {
 
         AbiDecoder.addABI(documentHashContractABI);
 
+        // Make these requests execute in parallel
         const transactions: Transaction[] = await Promise.all(block.transactions.map(transactionHash => web3.eth.getTransaction(transactionHash, block.number)));
 
         for (const transaction of transactions) {
@@ -102,7 +106,7 @@ export class DocumentHashSmartContractService {
             throw new Error('MISSING_HASH');
         }
 
-        const encodedABI = this.documentHashContract.methods.write(hash).encodeABI();
+        const encodedABI = this.smartContract.methods.write(hash).encodeABI();
 
         const currentAccountAddress = (await web3.eth.getAccounts())[0];
 
@@ -119,23 +123,20 @@ export class DocumentHashSmartContractService {
 
         const transactionEventEmitter = web3.eth.sendTransaction(transaction);
 
-        transactionEventEmitter
-            .on('receipt', () => {
-                // The transaction was mined successfully.
-                this.pendingTransactionHash = null;
-            });
-
         return this.attachTransactionEventHandlers(transactionEventEmitter);
     }
 
-    attachTransactionEventHandlers(transactionEventEmitter) {
+    attachTransactionEventHandlers(transactionEventEmitter): Promise<{ transactionEventEmitter: any }> {
         return new Promise((resolve, reject) => {
             transactionEventEmitter
                 .on('transactionHash', (transactionHash) => {
                     console.log('Transaction hash received.', transactionHash);
 
                     this.pendingTransactionHash = transactionHash;
-                    this.applicationRef.tick();
+
+                    resolve({
+                        transactionEventEmitter
+                    });
                 })
                 .on('receipt', (receipt) => {
                     console.log('Receipt received.', receipt);
@@ -143,14 +144,15 @@ export class DocumentHashSmartContractService {
                 .on('confirmation', (confirmationNumber, receipt) => {
                     console.log('Transaction confirmed.', confirmationNumber, receipt);
 
-                    this.pendingTransactionHash = null;
-                    this.applicationRef.tick();
+                    this.numberOfConfirmations = confirmationNumber;
 
-                    resolve({
-                        confirmationNumber,
-                        receipt,
-                        transactionEventEmitter
-                    });
+                    if (this.isTransactionFullyConfirmed()) {
+                        transactionEventEmitter.emit('completeConfirmation', this.numberOfConfirmations);
+                        // The transaction was mined successfully.
+                        this.pendingTransactionHash = null;
+                        this.numberOfConfirmations  = null;
+                        transactionEventEmitter.removeAllListeners();
+                    }
                 })
                 .on('error', (error, receipt) => {
                     console.log('The transaction failed.', error);
@@ -162,10 +164,23 @@ export class DocumentHashSmartContractService {
                     }
 
                     this.pendingTransactionHash = null;
-                    this.applicationRef.tick();
                     reject(error);
                 });
         });
+    }
+
+    getAbbreviatedPendingTransactionHash(): string {
+        if (!this.pendingTransactionHash) return '';
+
+        return this.pendingTransactionHash.substr(0, 15) + '...' + this.pendingTransactionHash.substr(-15);
+    }
+
+    public isTransactionPending(): boolean {
+        return !!this.pendingTransactionHash;
+    }
+
+    public isTransactionFullyConfirmed(): boolean {
+        return this.numberOfConfirmations >= this.TARGET_NUMBER_OF_CONFIRMATIONS;
     }
 }
 

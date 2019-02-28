@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectorRef, Component, NgZone} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DocumentHashSmartContractService} from '../../lib/document-hash-smart-contract.service';
 
@@ -10,6 +10,8 @@ import {DocumentHashSmartContractService} from '../../lib/document-hash-smart-co
 export class PerpetuateComponent {
     constructor(private router: Router,
                 private route: ActivatedRoute,
+                private changeDetectorRef: ChangeDetectorRef,
+                private ngZone: NgZone,
                 public documentHashContract: DocumentHashSmartContractService) {
     }
 
@@ -18,13 +20,33 @@ export class PerpetuateComponent {
 
     ngOnInit() {
         this.hash     = this.route.snapshot.params['fileHash'];
-        this.filename = this.route.snapshot.queryParams['filename'];
+        this.filename = this.route.snapshot.queryParams['filename'] || 'Unknown filename';
     }
 
     async writeHashToBlockchain() {
-        await this.documentHashContract.writeHash(this.hash);
+        const result = await this.documentHashContract.writeHash(this.hash);
 
-        this.router.navigate(['hashes', this.hash]);
+        // Change detection needs to be triggered manually, since Angular does not patch the web3 event emitters.
+        if (!this.changeDetectorRef['destroyed']) {
+            this.changeDetectorRef.detectChanges();
+        }
+
+        result.transactionEventEmitter
+            .on('confirmation', (confirmationNumber) => {
+                // Change detection needs to be triggered manually, since Angular does not patch the web3 event emitters.
+                if (!this.changeDetectorRef['destroyed']) {
+                    this.changeDetectorRef.detectChanges();
+                }
+            })
+            .once('completeConfirmation', () => {
+                this.ngZone.run(() => this.router.navigate(['hashes', this.hash]));
+            });
+    }
+
+    skipWaitingForConfirmations(): void {
+        this.ngZone.run(() => {
+            this.router.navigate(['hashes', this.hash]);
+        });
     }
 
     removeUploadedFile(): void {

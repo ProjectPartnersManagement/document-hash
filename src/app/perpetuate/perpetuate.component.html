@@ -1,6 +1,6 @@
 <div id="hash-container">
-    <span class="filename" *ngIf="filename">{{filename}}</span>
-    <div class="separator" *ngIf="filename">
+    <span class="filename">{{filename}}</span>
+    <div class="separator">
         <mat-icon id="file-to-hash">arrow_forward_ios</mat-icon>
     </div>
     <pp-hash [hash]="hash"></pp-hash>
@@ -9,8 +9,9 @@
         <mat-icon id="remove-file" (click)="removeUploadedFile()">arrow_back</mat-icon>
     </div>
 
-    <div class="button" *ngIf="!documentHashContract.pendingTransactionHash" (click)="writeHashToBlockchain()">Perpetuate</div>
-    <div id="transaction-pending-container" *ngIf="documentHashContract.pendingTransactionHash">
+    <div class="button" *ngIf="!documentHashContract.isTransactionPending()" (click)="writeHashToBlockchain()">Perpetuate</div>
+
+    <div id="transaction-pending-container" *ngIf="documentHashContract.isTransactionPending()">
         <div id="transaction-pending-icon">
             <svg width='24px' height='24px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-ring-alt">
                 <rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect>
@@ -22,7 +23,8 @@
             </svg>
         </div>
         <div id="transaction-pending-label">
-            Waiting for transaction {{documentHashContract.pendingTransactionHash}}[...] to be included in a block...
+            <span *ngIf="documentHashContract.numberOfConfirmations === null">Waiting for transaction {{documentHashContract.getAbbreviatedPendingTransactionHash()}} to be included in a block...</span>
+            <span *ngIf="documentHashContract.numberOfConfirmations !== null">Received confirmation {{documentHashContract.numberOfConfirmations}}/{{documentHashContract.TARGET_NUMBER_OF_CONFIRMATIONS}}...<a href="#" (click)="skipWaitingForConfirmations()">Skip.</a></span>
         </div>
     </div>
 </div>

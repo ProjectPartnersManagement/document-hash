@@ -1,11 +1,18 @@
 :host {
     width: 100%;
-}
-
-#hash-details-container {
     display: flex;
     flex-direction: column;
     padding: 0 15px;
+}
+
+#transaction-pending-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    #transaction-pending-label {
+        padding-bottom: 10px;
+    }
 }
 
 #reset-container {
