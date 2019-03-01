@@ -49,17 +49,60 @@
     padding-left: 10px;
 }
 
-#search-hash-manually {
+#further-actions-container {
     position: absolute;
     bottom: 5px;
     right: 5px;
     display: flex;
     align-items: center;
-    cursor: pointer;
-    color: #c1c1c1;
-    transition: all 0.2s;
 
-    &:hover {
-        color: #000000;
+    .entry {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        color: #c1c1c1;
+        transition: all 0.2s;
+
+        &:hover {
+            color: #000000;
+        }
+    }
+
+    .divider {
+        color: #c1c1c1;
+        margin: 0 10px;
+    }
+}
+
+#instructions-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+#instructions {
+    position: absolute;
+    background: #ffffff;
+    padding: 20px;
+
+    h3 {
+        margin-top: 0;
+    }
+
+    .close-icon {
+        cursor: pointer;
+        opacity: .5;
+        transition: opacity .2s ease;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+
+        &:hover {
+            opacity: 1;
+            transition: opacity .2s ease;
+        }
     }
 }

@@ -7,11 +7,33 @@
         <input type="file" ng2FileSelect [uploader]="uploader" #fileUpload>
     </div>
     <div class="label">Add file</div>
-    <div id="search-hash-manually" (click)="openSearch()">
-        <mat-icon>search</mat-icon>
-        Search
+
+    <div id="further-actions-container">
+        <div id="open-instrcutions" class="entry" (click)="openInstrcutions()">Instructions</div>
+        <span class="divider"> | </span>
+        <div id="search-hash-manually" class="entry" (click)="openSearch()">
+            Search
+        </div>
     </div>
 </div>
+
+<div id="instructions-overlay" *ngIf="showInstructions" (click)="closeInstructions()"></div>
+<div id="instructions" *ngIf="showInstructions">
+    <h3>Timestamp a new file</h3>
+    <ol>
+        <li>Choose a file.</li>
+        <li>A SHA-256 hash will be generated.</li>
+        <li>Save the hash on the Ethereum Blockchain.</li>
+    </ol>
+    <h3>Check timestamp of existing hash</h3>
+    <ol>
+        <li>Choose a file.</li>
+        <li>The timestamp will be displayed.</li>
+    </ol>
+
+    <img src="/assets/close.png" alt="Schließen" class="close-icon" (click)="closeInstructions()">
+</div>
+
 <div id="drop-overlay"
      *ngIf="fileIsOverBody"
      ng2FileDrop

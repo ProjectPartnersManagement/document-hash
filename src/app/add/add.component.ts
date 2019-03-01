@@ -23,6 +23,8 @@ export class AddComponent {
     hash: string;
     filename: string;
 
+    showInstructions: boolean = false;
+
     constructor(private router: Router) {
     }
 
@@ -99,5 +101,13 @@ export class AddComponent {
 
     openSearch(): void {
         this.router.navigate(['search']);
+    }
+
+    openInstrcutions(): void {
+        this.showInstructions = true;
+    }
+
+    closeInstructions(): void {
+        this.showInstructions = false;
     }
 }

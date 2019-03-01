@@ -1,3 +1,10 @@
+h1 {
+  padding-top: 5px; }
+
+#client-side-note {
+  text-align: center;
+  color: #777777; }
+
 #metamask-missing-error {
   background: #da0000;
   color: #fff;
@@ -24,7 +31,8 @@
   position: absolute;
   top: calc(50% - 100px);
   left: calc(50% - 210px);
-  display: flex; }
+  display: flex;
+  justify-content: center; }
 
 router-outlet {
   position: relative; }

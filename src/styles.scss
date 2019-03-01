@@ -19,6 +19,12 @@ body {
     font-size: 1rem;
 }
 
+h1 {
+    text-align: center;
+    color: #bdbd00;
+    font-weight: normal;
+}
+
 h2 {
     color: #bdbd00;
     margin: 8px 0 5px;
@@ -96,4 +102,7 @@ a {
         background-color: #a0b105;
         color: #ffffff;
     }
+}
+
+.help-indicator {
 }
