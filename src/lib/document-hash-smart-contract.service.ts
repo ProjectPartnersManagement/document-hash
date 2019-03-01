@@ -48,12 +48,18 @@ export class DocumentHashSmartContractService {
         let blockNumber;
 
         try {
-            blockNumber = await this.smartContract.methods.getBlockNumber(fileHash).call();
+            const timeout = setTimeout(() => {
+                alert('Timeout occurred trying to get the block number by file hash. Is Metamask on the right network?');
+                throw new Error('GETTING_BLOCK_NUMBER_BY_FILE_HASH_TIMED_OUT');
+            }, 5000);
+            blockNumber   = await this.smartContract.methods.getBlockNumber(fileHash).call();
+            clearTimeout(timeout);
         }
         catch (error) {
             console.error('Error getting block number by file hash.', error);
-            if (error.message === 'Couldn\'t decode address from ABI: 0x')
-                throw new Error('HASH_NOT_FOUND');
+            // Returned if the smart contract cannot be found. Typically caused by a wrong network (mainnet vs. private network)
+            if (error.message === 'Couldn\'t decode uint256 from ABI: 0x')
+                throw new Error('RESPONSE_FROM_SMART_CONTRACT_INVALID');
             else
                 throw new Error('GETTING_BLOCK_NUMBER_BY_FILE_HASH_FAILED');
         }
