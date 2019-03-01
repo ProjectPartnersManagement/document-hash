@@ -7,7 +7,10 @@
         <input type="file" ng2FileSelect [uploader]="uploader" #fileUpload>
     </div>
     <div class="label">Add file</div>
-    <div id="search-hash-manually"></div>
+    <div id="search-hash-manually" (click)="openSearch()">
+        <mat-icon>search</mat-icon>
+        Search
+    </div>
 </div>
 <div id="drop-overlay"
      *ngIf="fileIsOverBody"

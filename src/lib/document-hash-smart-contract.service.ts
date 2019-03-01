@@ -176,7 +176,9 @@ export class DocumentHashSmartContractService {
         // The transaction was mined successfully.
         this.pendingTransactionHash = null;
         this.numberOfConfirmations  = null;
-        this.transactionEventEmitter.removeAllListeners();
+        if (this.transactionEventEmitter) {
+            this.transactionEventEmitter.removeAllListeners();
+        }
     }
 
     isTransactionPending(): boolean {

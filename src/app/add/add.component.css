@@ -37,4 +37,16 @@
   font-size: 1.2em;
   padding-left: 10px; }
 
+#search-hash-manually {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #c1c1c1;
+  transition: all 0.2s; }
+  #search-hash-manually:hover {
+    color: #000000; }
+
 /*# sourceMappingURL=add.component.css.map */

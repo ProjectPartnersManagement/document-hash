@@ -24,7 +24,8 @@ mat-icon#file-to-hash {
 #remove-file-container {
   position: absolute;
   top: 10px;
-  left: 10px; }
+  left: 10px;
+  cursor: pointer; }
 
 mat-icon#remove-file {
   opacity: 0.5;

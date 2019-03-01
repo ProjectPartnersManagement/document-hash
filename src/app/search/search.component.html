@@ -1,0 +1,13 @@
+<div id="reset-container" matTooltip="Back to file upload">
+    <mat-icon id="reset" (click)="reset()">arrow_back</mat-icon>
+</div>
+
+<h2>Search</h2>
+
+<div id="search-container">
+    <mat-form-field>
+        <input matInput placeholder="Document Hash" [(ngModel)]="searchTerm">
+    </mat-form-field>
+
+    <div class="button" (click)="executeSearch()">Search</div>
+</div>

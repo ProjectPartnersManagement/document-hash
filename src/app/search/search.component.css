@@ -1,0 +1,20 @@
+:host {
+  width: 100%;
+  padding: 13px 35px 0; }
+
+#search-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 35px; }
+
+#reset-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  cursor: point; }
+
+mat-form-field {
+  width: 100%; }
+
+/*# sourceMappingURL=search.component.css.map */

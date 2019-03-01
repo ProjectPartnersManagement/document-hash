@@ -71,7 +71,8 @@ export class AddComponent {
     public onFileOverDropZone(fileOver: boolean): void {
         if (fileOver === true) {
             this.fileIsOverDropZone = true;
-        } else {
+        }
+        else {
             this.fileIsOverDropZone = false;
             this.fileIsOverBody     = false;
         }
@@ -95,4 +96,8 @@ export class AddComponent {
     /////////////////////////////////////////////////////////////////////////////*/
     //  END Drag'n'Drop File Upload
     /////////////////////////////////////////////////////////////////////////////*/
+
+    openSearch(): void {
+        this.router.navigate(['search']);
+    }
 }
