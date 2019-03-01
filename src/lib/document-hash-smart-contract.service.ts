@@ -34,6 +34,7 @@ export class DocumentHashSmartContractService {
         // Non-dapp browsers...
         else {
             console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+            return;
         }
         this.smartContract = new web3.eth.Contract(documentHashContractABI, this.SMART_CONTRACT_ADDRESS.toLowerCase());
 
@@ -111,6 +112,11 @@ export class DocumentHashSmartContractService {
         const encodedABI = this.smartContract.methods.write(hash).encodeABI();
 
         const currentAccountAddress = (await web3.eth.getAccounts())[0];
+
+        if (!currentAccountAddress) {
+            alert('Your account address could not be read. Please allow access to your account address through Metamask.');
+            return;
+        }
 
         const transaction = {
             // Use the chain ID we defined in the genesis-block.json when creating
