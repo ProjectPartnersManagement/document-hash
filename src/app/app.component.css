@@ -1,5 +1,7 @@
 h1 {
-  padding-top: 5px; }
+  padding-top: 5px;
+  margin-bottom: 5px;
+  font-size: 20pt; }
 
 #client-side-note {
   text-align: center;
@@ -15,15 +17,20 @@ h1 {
   #metamask-missing-error a {
     color: #fff; }
 
-#logo {
-  background-image: url("/assets/pp-logo.png");
-  height: 60px;
-  width: 200px;
-  background-size: contain;
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  cursor: pointer; }
+#logo-and-headline-container {
+  display: flex;
+  align-items: center; }
+  #logo-and-headline-container #logo {
+    background-image: url("/assets/pp-logo.png");
+    height: 60px;
+    width: 200px;
+    background-size: contain;
+    padding: 10px;
+    cursor: pointer; }
+  #logo-and-headline-container .logo-flex-container {
+    width: 200px; }
+  #logo-and-headline-container #headline-container {
+    flex: 1; }
 
 #card {
   min-height: 200px;
