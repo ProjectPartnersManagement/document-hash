@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {ChangeDetectorRef, Component} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DocumentHashSmartContractService} from '../../lib/document-hash-smart-contract.service';
 
@@ -10,6 +10,7 @@ import {DocumentHashSmartContractService} from '../../lib/document-hash-smart-co
 export class HashDetailsComponent {
     constructor(private router: Router,
                 private route: ActivatedRoute,
+                private changeDetectorRef: ChangeDetectorRef,
                 public documentHashContract: DocumentHashSmartContractService) {
     }
 
@@ -36,6 +37,7 @@ export class HashDetailsComponent {
             hashMetadata = await this.documentHashContract.getHashMetadata(this.fileHash);
         }
         catch (error) {
+            this.requestPending = false;
             if (error.message === 'METADATA_FOR_GIVEN_HASH_NOT_FOUND') {
                 this.fileHashNotFound = true;
                 return;

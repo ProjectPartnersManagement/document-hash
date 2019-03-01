@@ -16,6 +16,11 @@ export class PpHashComponent {
     getAbbreviatedHash(): string {
         if (!this.hash) return '';
 
+        // If the hash is very short (2x 15 = 30, see substr below), there is no need to shorten it.
+        if (this.hash.length <= 30) {
+            return this.hash;
+        }
+
         return this.hash.substr(0, 15) + '...' + this.hash.substr(-15);
     }
 
