@@ -18,9 +18,22 @@ export class PerpetuateComponent implements OnInit {
     hash: string;
     filename: string;
 
-    ngOnInit() {
+    async ngOnInit() {
         this.hash     = this.route.snapshot.params['fileHash'];
         this.filename = this.route.snapshot.queryParams['filename'] || 'Unknown filename';
+
+        try {
+            const hashMetadata = await this.documentHashContract.getHashMetadata(this.hash);
+            // If the hash exists already, show the user the hash's details
+            if (hashMetadata) {
+                this.router.navigate(['hashes', this.hash]);
+            }
+        }
+        catch (error) {
+            if (error.message === 'METADATA_FOR_GIVEN_HASH_NOT_FOUND') {
+                // Do nothing
+            }
+        }
     }
 
     async writeHashToBlockchain() {
