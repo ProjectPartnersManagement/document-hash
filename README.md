@@ -67,3 +67,9 @@ Restart nginx
 If everything worked, you should be able to see the web application with your favorite browser (we use Firefox & Chrome).
 
 ![Screenshot of the Document Hash Blockchain Application](https://github.com/ProjectPartnersManagement/document-hash/raw/master/readme-src/screenshot-first-page.png "Screenshot of the first page")
+
+## Blockchain Services
+If you like this case and need assistance thinking of how the Blockchain can transform your enterprise, visit our website at https://blockchain.project-partners.de.
+
+## License
+The Document Hash Project is [MIT licensed](https://github.com/ProjectPartnersManagement/document-hash/blob/master/LICENSE).
