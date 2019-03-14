@@ -17,7 +17,7 @@ export class DocumentHashSmartContractService {
     };
     networkId: number;
 
-    smartContract;
+    private smartContract;
     pendingTransactionHash: string;
 
     numberOfConfirmations: number          = null;
@@ -41,16 +41,27 @@ export class DocumentHashSmartContractService {
             console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
             return;
         }
-        web3.eth.net.getId((error, networkId) => {
-            if (error) {
-                console.error('Error getting the network ID.', error);
-                return;
-            }
-            this.networkId     = networkId;
-            this.smartContract = new web3.eth.Contract(documentHashContractABI, this.SMART_CONTRACT_ADDRESS[networkId].toLowerCase());
-        });
-
         (window as any).AbiDecoder = AbiDecoder;
+        this.getSmartContract();
+    }
+
+    async getSmartContract() {
+        if (this.smartContract) {
+            return this.smartContract;
+        }
+        else {
+            return await new Promise((resolve, reject) => {
+                web3.eth.net.getId((error, networkId) => {
+                    if (error) {
+                        console.error('Error getting the network ID.', error);
+                        return reject(error);
+                    }
+                    this.networkId     = networkId;
+                    this.smartContract = new web3.eth.Contract(documentHashContractABI, this.SMART_CONTRACT_ADDRESS[networkId].toLowerCase());
+                    resolve(this.smartContract);
+                });
+            });
+        }
     }
 
     /**
@@ -64,7 +75,7 @@ export class DocumentHashSmartContractService {
                 alert('Timeout occurred trying to get the block number by file hash. Is Metamask on the right network?');
                 throw new Error('GETTING_BLOCK_NUMBER_BY_FILE_HASH_TIMED_OUT');
             }, 5000);
-            blockNumber   = await this.smartContract.methods.getBlockNumber(fileHash).call();
+            blockNumber   = await (await this.getSmartContract()).methods.getBlockNumber(fileHash).call();
             clearTimeout(timeout);
         }
         catch (error) {
@@ -94,6 +105,9 @@ export class DocumentHashSmartContractService {
         const transactions: Transaction[] = await Promise.all(block.transactions.map(transactionHash => web3.eth.getTransaction(transactionHash, block.number)));
 
         for (const transaction of transactions) {
+            // Some transactions on Ropsten did not have a valid "to" address. The property "to" existed but was null.
+            if (!transaction.to) continue;
+
             // Only inspect transactions targeting this smart contract
             if (transaction.to.toLowerCase() !== this.SMART_CONTRACT_ADDRESS[this.networkId].toLowerCase()) {
                 console.log(`Skip searching through transaction "${transaction.hash}" because it does not concern the document hash smart contract.`);
@@ -127,7 +141,7 @@ export class DocumentHashSmartContractService {
             throw new Error('MISSING_HASH');
         }
 
-        const encodedABI = this.smartContract.methods.write(hash).encodeABI();
+        const encodedABI = (await this.getSmartContract()).methods.write(hash).encodeABI();
 
         const currentAccountAddress = (await web3.eth.getAccounts())[0];
 
