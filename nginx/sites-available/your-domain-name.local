@@ -1,0 +1,43 @@
+# Forward non-HTTPS requests to HTTPS
+server {
+  listen       80;
+  server_name  your-domain-name.local;
+  access_log  /var/log/nginx/http-document-hash.showcase.project-partners.de-access.log;
+  return       301 https://your-domain-name.local$request_uri;
+}
+
+server {
+  listen 443 ssl;
+
+  # Listen for requests to this domain
+  server_name your-domain-name.local;
+
+  # Define root directory from which files are served.
+  root /path/to/your/webroot/document-hash/dist;
+
+  charset utf-8;
+
+  # For location favicon.ico disable access log and not-found logs.
+  location = /favicon.ico { access_log off; log_not_found off; }
+  location = /robots.txt  { access_log off; log_not_found off; }
+
+  # This should be turned on in production.
+  access_log /var/log/nginx/your-domain-name.local-access.log combined;
+  error_log  /var/log/nginx/your-domain-name.local-error.log error;
+
+  sendfile off;
+
+  # Clients may only send requests of max. 1 MB in size.
+  client_max_body_size 1m;
+
+  # Include the basic h5bp config set
+  include h5bp/basic.conf;
+
+  # Let the app handle non-API requests without a file ending (thus, static content like .css and .js files are still served from the file system)
+  location / {
+    try_files /index.html =404;
+  }
+
+  ssl_certificate /path/to/your/server.crt;
+  ssl_certificate_key /path/to/your/server.key;
+}
