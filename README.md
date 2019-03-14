@@ -68,6 +68,59 @@ If everything worked, you should be able to see the web application with your fa
 
 ![Screenshot of the Document Hash Blockchain Application](https://github.com/ProjectPartnersManagement/document-hash/raw/master/readme-src/screenshot-first-page.png "Screenshot of the first page")
 
+## Smart Contract
+
+### Addresses
+
+Mainnet: 0x42ba3977dEDb68d1aA284847B710B870cf8217B5
+
+Ropsten: 0xd34445d1415ebda6753b3a63fd7367515b629bfd
+ 
+
+### ABI
+```
+[
+ 	{
+ 		"constant": false,
+ 		"inputs": [
+ 			{
+ 				"name": "hash",
+ 				"type": "string"
+ 			}
+ 		],
+ 		"name": "write",
+ 		"outputs": [],
+ 		"payable": false,
+ 		"stateMutability": "nonpayable",
+ 		"type": "function"
+ 	},
+ 	{
+ 		"constant": true,
+ 		"inputs": [
+ 			{
+ 				"name": "hash",
+ 				"type": "string"
+ 			}
+ 		],
+ 		"name": "getBlockNumber",
+ 		"outputs": [
+ 			{
+ 				"name": "",
+ 				"type": "uint256"
+ 			}
+ 		],
+ 		"payable": false,
+ 		"stateMutability": "view",
+ 		"type": "function"
+ 	}
+ ]
+```
+
+## Verification via MyEtherWallet.com
+You can verify that the hash was written to the Blockchain by triggering the smart contract via [MyEtherWallet.com](https://www.myetherwallet.com).
+
+![Instructions Verify Document Hash via MyEtherWallet.com](https://github.com/ProjectPartnersManagement/document-hash/raw/master/readme-src/myetherwallet.gif "Instructions MyEtherWallet")
+
 ## Blockchain Services
 If you like this case and need assistance thinking of how the Blockchain can transform your enterprise, visit our website at https://blockchain.project-partners.de. The website is German but we're used to working with international clients.
 
