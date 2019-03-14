@@ -10,7 +10,12 @@ declare var ethereum: any;
 @Injectable()
 export class DocumentHashSmartContractService {
     // Live : Development
-    SMART_CONTRACT_ADDRESS: string = location.href.includes('project-partners.de') ? '0x42ba3977dEDb68d1aA284847B710B870cf8217B5' : '0xde05cf220dab7d2b5437394ae3dbd3d16d119d4c';
+    SMART_CONTRACT_ADDRESS: { [networkId: number]: string } = {
+        1    : '0x42ba3977dEDb68d1aA284847B710B870cf8217B5',
+        3    : '0xd34445d1415ebda6753b3a63fd7367515b629bfd',
+        8888 : '0xde05cf220dab7d2b5437394ae3dbd3d16d119d4c',
+    };
+    networkId: number;
 
     smartContract;
     pendingTransactionHash: string;
@@ -36,7 +41,14 @@ export class DocumentHashSmartContractService {
             console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
             return;
         }
-        this.smartContract = new web3.eth.Contract(documentHashContractABI, this.SMART_CONTRACT_ADDRESS.toLowerCase());
+        web3.eth.net.getId((error, networkId) => {
+            if (error) {
+                console.error('Error getting the network ID.', error);
+                return;
+            }
+            this.networkId     = networkId;
+            this.smartContract = new web3.eth.Contract(documentHashContractABI, this.SMART_CONTRACT_ADDRESS[networkId].toLowerCase());
+        });
 
         (window as any).AbiDecoder = AbiDecoder;
     }
@@ -83,7 +95,7 @@ export class DocumentHashSmartContractService {
 
         for (const transaction of transactions) {
             // Only inspect transactions targeting this smart contract
-            if (transaction.to.toLowerCase() !== this.SMART_CONTRACT_ADDRESS.toLowerCase()) {
+            if (transaction.to.toLowerCase() !== this.SMART_CONTRACT_ADDRESS[this.networkId].toLowerCase()) {
                 console.log(`Skip searching through transaction "${transaction.hash}" because it does not concern the document hash smart contract.`);
                 continue;
             }
@@ -128,7 +140,7 @@ export class DocumentHashSmartContractService {
             // Use the chain ID we defined in the genesis-block.json when creating
             chainId  : config.ethereum.chainId,
             from     : currentAccountAddress,
-            to       : this.SMART_CONTRACT_ADDRESS,
+            to       : this.SMART_CONTRACT_ADDRESS[this.networkId],
             // Will be set by Metamask
             // gas      : 3000000,
             gasPrice : await web3.eth.getGasPrice() || '100000000',

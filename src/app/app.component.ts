@@ -22,11 +22,23 @@ export class AppComponent {
             this.metamaskMissing = true;
         }
 
-        this.SMART_CONTRACT_ADDRESS = this.documentHashSmartContractService.SMART_CONTRACT_ADDRESS;
+        this.SMART_CONTRACT_ADDRESS = this.documentHashSmartContractService.SMART_CONTRACT_ADDRESS[this.documentHashSmartContractService.networkId];
     }
 
     navigateToStartPage(): void {
         this.router.navigate(['/']);
+    }
+
+    getSmartContractEtherscanUrl(): string {
+        switch (this.documentHashSmartContractService.networkId) {
+            case 1:
+                return `https://etherscan.io/address/${this.SMART_CONTRACT_ADDRESS}#code`;
+            case 3:
+                return `https://ropsten.etherscan.io/address/${this.SMART_CONTRACT_ADDRESS}#code`;
+            case 8888:
+            default:
+                return null;
+        }
     }
 
 }

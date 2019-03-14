@@ -24,5 +24,6 @@
     <span class="divider"> | </span>
     <a href="https://opensource.org/licenses/MIT" class="entry">License: MIT</a>
     <span class="divider"> | </span>
-    <a [href]="'https://etherscan.io/address/' + SMART_CONTRACT_ADDRESS + '#code'" class="entry">Smart Contract</a>
+    <a *ngIf="getSmartContractEtherscanUrl()" [href]="getSmartContractEtherscanUrl()" class="entry">Smart Contract</a>
+    <a *ngIf="!getSmartContractEtherscanUrl()" href="#" onclick="alert('The smart contract code cannot be verified through Etherscan because you are on a private chain. Change to the mainnet or ropsten to see the smart contract source.'); return false;" class="entry">Smart Contract</a>
 </div>
